@@ -13,7 +13,7 @@ public class MemberCRUD extends CommonCRUD {
 	 * 회원을 추가한다
 	 * @param conn
 	 * @param mBean
-	 * @return
+	 * @return int 추가 여부(1:추가, 0:실패)
 	 */
 	public int insertMember(MemberBean mBean) {
 		Connection conn = getConnection();
@@ -46,7 +46,7 @@ public class MemberCRUD extends CommonCRUD {
 	
 	/**
 	 * 회원 리스트를 취득한다.
-	 * @return
+	 * @return List<MemberBean>
 	 */
 	public List<MemberBean> getMemberList(){
 		Connection conn = getConnection();
@@ -89,10 +89,14 @@ public class MemberCRUD extends CommonCRUD {
 		
 	} // end getMemberList
 	
-	// TODO 회원 ID를 받아서 회원정보를 취득하는 메서드를 작성하시오!
+	/**
+	 * TODO 회원 ID를 받아서 회원정보를 취득하는 메서드를 작성하시오!
+	 * @param id
+	 * @return MemberBean
+	 */
 	public MemberBean getMember(String id) {
 		Connection conn = getConnection();
-		MemberBean bean = new MemberBean();
+		MemberBean mBean = new MemberBean();
 		
 		try {
 			//3.쿼리 수행을 위한 Statment 객체 생성
@@ -106,16 +110,16 @@ public class MemberCRUD extends CommonCRUD {
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {
-				bean.setMemberNo( rs.getString("member_no") );
-				bean.setId( rs.getString("id") );
-				bean.setPw( rs.getString("pw") );
-				bean.setName( rs.getString("name") );
-				bean.setEmail( rs.getString("email") );
-				bean.setBirthdate( rs.getString("birthdate") );
-				bean.setHp( rs.getString("hp") );
-				bean.setAddr( rs.getString("addr") );
-				bean.setLastLoginDt( rs.getString("last_login_dt") );
-				bean.setRegDt( rs.getString("reg_dt") );
+				mBean.setMemberNo( rs.getString("member_no") );
+				mBean.setId( rs.getString("id") );
+				mBean.setPw( rs.getString("pw") );
+				mBean.setName( rs.getString("name") );
+				mBean.setEmail( rs.getString("email") );
+				mBean.setBirthdate( rs.getString("birthdate") );
+				mBean.setHp( rs.getString("hp") );
+				mBean.setAddr( rs.getString("addr") );
+				mBean.setLastLoginDt( rs.getString("last_login_dt") );
+				mBean.setRegDt( rs.getString("reg_dt") );
 				
 			}
 		} catch (Exception e) {
@@ -123,6 +127,49 @@ public class MemberCRUD extends CommonCRUD {
 			System.out.println("조회 안됨");
 		}
 		
-		return bean;
+		return mBean;
 	} // end getMember
+	
+	/**
+	 * TODO: ID, PW로 해당 멤버를 찾는 로직을 구현하시오. (안하면 화장실 3시간 못감)
+	 * @param id
+	 * @param pw
+	 * @return MemberBean
+	 */
+	public MemberBean getFindMember(String id, String pw) {
+		Connection conn = getConnection();
+		MemberBean mBean = new MemberBean();
+		
+		try {
+			//3.쿼리 수행을 위한 Statment 객체 생성
+			Statement stmt = conn.createStatement();
+			
+			//4.쿼리 작성
+			String sql = "SELECT member_no, id, pw, name, email, birthdate, hp, addr, last_login_dt, reg_dt";
+			sql += " FROM member WHERE id = '" + id + "'" + " and pw = '" + pw + "'";
+						
+			//5.쿼리수행
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				mBean.setMemberNo( rs.getString("member_no") );
+				mBean.setId( rs.getString("id") );
+				mBean.setPw( rs.getString("pw") );
+				mBean.setName( rs.getString("name") );
+				mBean.setEmail( rs.getString("email") );
+				mBean.setBirthdate( rs.getString("birthdate") );
+				mBean.setHp( rs.getString("hp") );
+				mBean.setAddr( rs.getString("addr") );
+				mBean.setLastLoginDt( rs.getString("last_login_dt") );
+				mBean.setRegDt( rs.getString("reg_dt") );
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("조회 안됨");
+		}
+		
+		
+		return mBean;
+	}
 }

@@ -34,9 +34,18 @@ public class TestQuery {
 		MemberBean mBean = mCRUD.getMember("hong");
 		if(mBean != null) {
 			mBean.printAll();
-			System.out.println("ID 조회 성공");
+			System.out.println("ID 로 회원 조회 성공");
 		}else {
 			System.out.println("해당 ID가 없습니다.");
+		}
+		
+		//회원ID, PW 받아서 회원정보 취득
+		mBean = mCRUD.getFindMember("minimi", "1234");
+		if(mBean != null) {
+			mBean.printAll();
+			System.out.println("ID, PW 로 회원 조회 성공");
+		}else {
+			System.out.println("조회 실패");
 		}
 				
 		
