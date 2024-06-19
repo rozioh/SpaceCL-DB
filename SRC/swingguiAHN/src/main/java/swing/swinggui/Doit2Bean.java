@@ -1,6 +1,6 @@
 package swing.swinggui;
 
-public class DoitBean {
+public class Doit2Bean {
 	private String col1;
 	private String col2;
 	private String col3;
@@ -52,6 +52,5 @@ public class DoitBean {
 	public void setCol7(String col7) {
 		this.col7 = col7;
 	}
-	
 	
 }
