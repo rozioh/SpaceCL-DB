@@ -134,9 +134,11 @@ public class MemberCRUD extends CommonCRUD {
 	 * TODO: ID, PW로 해당 멤버를 찾는 로직을 구현하시오. (안하면 화장실 3시간 못감)
 	 * @param id
 	 * @param pw
-	 * @return MemberBean
+	 * @return true: 해당멤버존재, false: 멤버 존재하지 않음
 	 */
-	public MemberBean getFindMember(String id, String pw) {
+	public boolean getFindMember(String id, String pw) {
+		boolean isRtn = false;
+		
 		Connection conn = getConnection();
 		MemberBean mBean = new MemberBean();
 		
@@ -151,25 +153,20 @@ public class MemberCRUD extends CommonCRUD {
 			//5.쿼리수행
 			ResultSet rs = stmt.executeQuery(sql);
 			
-			while(rs.next()) {
-				mBean.setMemberNo( rs.getString("member_no") );
-				mBean.setId( rs.getString("id") );
-				mBean.setPw( rs.getString("pw") );
-				mBean.setName( rs.getString("name") );
-				mBean.setEmail( rs.getString("email") );
-				mBean.setBirthdate( rs.getString("birthdate") );
-				mBean.setHp( rs.getString("hp") );
-				mBean.setAddr( rs.getString("addr") );
-				mBean.setLastLoginDt( rs.getString("last_login_dt") );
-				mBean.setRegDt( rs.getString("reg_dt") );
-				
+			//6. 쿼리 실행결과 출력하기
+			rs.next(); // next()를 안하고 실행하면 1번째를 가져올 수 없대
+			int cnt = rs.getInt(1);
+			if(cnt > 0) {
+				isRtn = true;
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("조회 안됨");
 		}
 		
 		
-		return mBean;
+		return isRtn;
 	}
+
 }
