@@ -2,17 +2,21 @@ package board.ui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import board.db.MemberBean;
 
 public class MainBoard2 extends JFrame {
 
@@ -31,38 +35,32 @@ public class MainBoard2 extends JFrame {
 	private JLabel lblPage8;
 	private JLabel lblPage9;
 	private JLabel lblPage10;
-	private JPanel panel_2;
-	private JPanel pnlArticle1;
-	private JLabel lblNewLabel;
-	private JButton btnNewButton_2;
-	private JLabel lblNewLabel_1;
-	private JLabel lblNewLabel_2;
-	private JPanel pnlArticle1_1;
-	private JLabel lblNewLabel_3;
-	private JButton btnNewButton_3;
-	private JLabel lblNewLabel_4;
-	private JLabel lblNewLabel_5;
+	private JTable boardTable;
+	private JButton btnWrite;
 
+	private MemberBean mMemBean;
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainBoard2 frame = new MainBoard2();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					MainBoard2 frame = new MainBoard2();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
 	 */
-	public MainBoard2() {
+	public MainBoard2(MemberBean memberBean) {
+		mMemBean = memberBean; // 로그인 정보 들고 옴
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 512);
 		contentPane = new JPanel();
@@ -85,48 +83,16 @@ public class MainBoard2 extends JFrame {
 		});
 		panel.add(btnSearch);
 		
-		panel_2 = new JPanel();
-		FlowLayout flowLayout_1 = (FlowLayout) panel_2.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.LEFT);
-		contentPane.add(panel_2, BorderLayout.CENTER);
-		
-		pnlArticle1_1 = new JPanel();
-		panel_2.add(pnlArticle1_1);
-		
-		lblNewLabel_3 = new JLabel("1200");
-		lblNewLabel_3.setFont(new Font("굴림", Font.BOLD, 20));
-		pnlArticle1_1.add(lblNewLabel_3);
-		
-		btnNewButton_3 = new JButton("이미지");
-		pnlArticle1_1.add(btnNewButton_3);
-		
-		lblNewLabel_4 = new JLabel("Board Titles....");
-		lblNewLabel_4.setFont(new Font("Arial", Font.BOLD, 20));
-		pnlArticle1_1.add(lblNewLabel_4);
-		
-		lblNewLabel_5 = new JLabel("조회수");
-		lblNewLabel_5.setFont(new Font("돋움", Font.PLAIN, 25));
-		pnlArticle1_1.add(lblNewLabel_5);
-		
-		pnlArticle1 = new JPanel();
-		FlowLayout fl_pnlArticle1 = (FlowLayout) pnlArticle1.getLayout();
-		fl_pnlArticle1.setVgap(15);
-		panel_2.add(pnlArticle1);
-		
-		lblNewLabel = new JLabel("1200");
-		lblNewLabel.setFont(new Font("굴림", Font.BOLD, 20));
-		pnlArticle1.add(lblNewLabel);
-		
-		btnNewButton_2 = new JButton("이미지");
-		pnlArticle1.add(btnNewButton_2);
-		
-		lblNewLabel_1 = new JLabel("Board Titles....");
-		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 20));
-		pnlArticle1.add(lblNewLabel_1);
-		
-		lblNewLabel_2 = new JLabel("조회수");
-		lblNewLabel_2.setFont(new Font("돋움", Font.PLAIN, 25));
-		pnlArticle1.add(lblNewLabel_2);
+		btnWrite = new JButton("글쓰기");
+		btnWrite.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				BoardWriteModal dialog = new BoardWriteModal(mMemBean);
+				dialog.setModal(true);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
+		panel.add(btnWrite);
 		
 		
 		
@@ -177,7 +143,55 @@ public class MainBoard2 extends JFrame {
 		btnNewButton = new JButton("다음");
 		panel_1.add(btnNewButton);
 		
-	
-	}
+		boardTable = new JTable();
+		contentPane.add(boardTable, BorderLayout.CENTER);
+		
+		addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowOpen()");
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowIconified()");
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowDeiconified()");
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowDeactivated()");
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowClosing()");
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowClosed()");
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowActivated()");
+			}
+		});
+	}; // 생성자
 
 }

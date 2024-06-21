@@ -14,17 +14,15 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
+import board.db.MemberBean;
 import board.db.MemberCRUD;
 
 public class Login extends JFrame {
 
-	private static MainBoard mb;
 
 	public static void main(String[] args) {
 		Login log = new Login();
 		
-		mb = new MainBoard();
-		mb.setVisible(false);
 	}
 
 	private TextField mTxtId;
@@ -86,9 +84,13 @@ public class Login extends JFrame {
 			boolean isFind = mMemCRUD.getFindMember(id, pw);
 			if(isFind) {
 				JOptionPane.showMessageDialog(null, "로그인에 성공하였습니다.");
-				// 로그인 창은 사라지고
-				setVisible(false);
-				mb.setVisible(true);
+			
+				// 멤버정보 조회
+				MemberBean memberBean = mMemCRUD.getMember(id);
+				MainBoard2 board = new MainBoard2(memberBean);
+				board.setVisible(true);
+				// 로그인 화면 숨김
+				Login.this.setVisible(false);
 				
 			}else{
 				JOptionPane.showMessageDialog(null, "로그인에 실패하였습니다.");
