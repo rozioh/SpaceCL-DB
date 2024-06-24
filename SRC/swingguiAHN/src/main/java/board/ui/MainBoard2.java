@@ -1,21 +1,30 @@
 package board.ui;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
+import board.db.BoardBean;
+import board.db.BoardCRUD;
 import board.db.MemberBean;
 
 public class MainBoard2 extends JFrame {
@@ -35,10 +44,13 @@ public class MainBoard2 extends JFrame {
 	private JLabel lblPage8;
 	private JLabel lblPage9;
 	private JLabel lblPage10;
-	private JTable boardTable;
 	private JButton btnWrite;
 
 	private MemberBean mMemBean;
+	private JPanel pnlTable;
+	private JTable boardTable;
+	private BoardCRUD mBoardCRUD = new BoardCRUD();
+	
 	/**
 	 * Launch the application.
 	 */
@@ -84,9 +96,15 @@ public class MainBoard2 extends JFrame {
 		panel.add(btnSearch);
 		
 		btnWrite = new JButton("글쓰기");
+		
+		// 익명 클래스!
 		btnWrite.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				BoardWriteModal dialog = new BoardWriteModal(mMemBean);
+//				if () {
+//					
+//				}
+				BoardWriteModal dialog = new BoardWriteModal(mMemBean, MainBoard2.this);
 				dialog.setModal(true);
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				dialog.setVisible(true);
@@ -143,55 +161,84 @@ public class MainBoard2 extends JFrame {
 		btnNewButton = new JButton("다음");
 		panel_1.add(btnNewButton);
 		
-		boardTable = new JTable();
-		contentPane.add(boardTable, BorderLayout.CENTER);
+		pnlTable = new JPanel();
+		contentPane.add(pnlTable, BorderLayout.CENTER);
 		
-		addWindowListener(new WindowListener() {
-			
-			@Override
-			public void windowOpened(WindowEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("windowOpen()");
+		// 리스트를 읽어온다.
+		showTable( mBoardCRUD.getBoardList(0));
+		
+	}; // end 생성자
+	
+	// 리스트 출력
+	public void showTable(List<BoardBean> boardList) {
+		
+		//TODO 출력 
+		String header[] = {"게시글 번호", "타이틀", "작성자", "조회수", "작성일" };
+		String contents[][] = {};
+		
+		
+		DefaultTableModel tableModel = new DefaultTableModel(contents, header);
+		
+		if(boardList != null) {
+			for(int i = 0; i < boardList.size(); i++) {
+				BoardBean bean = boardList.get(i);
 				
-			}
-			
-			@Override
-			public void windowIconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("windowIconified()");
+				Vector<String> vector = new Vector<String>();
+				vector.add( bean.getBoardNo() );
+				vector.add( bean.getTitle() );
+				vector.add( bean.getMemberName() );
+				vector.add( bean.getCount() );
+				vector.add( bean.getRegDt() );
 				
-			}
-			
+				tableModel.addRow(vector);
+			} // end for
+		} // end if
+		
+		boardTable = new JTable(tableModel) {
+			// 셀 편집을 못하도록 막는다.
 			@Override
-			public void windowDeiconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("windowDeiconified()");
+			public boolean isCellEditable(int row, int colum) {
+				return false;
 			}
-			
-			@Override
-			public void windowDeactivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("windowDeactivated()");
-			}
-			
-			@Override
-			public void windowClosing(WindowEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("windowClosing()");
-			}
-			
-			@Override
-			public void windowClosed(WindowEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("windowClosed()");
-			}
-			
-			@Override
-			public void windowActivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("windowActivated()");
-			}
-		});
-	}; // 생성자
+		};
+		
+		// 셀 값 가운데 정렬
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		boardTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+		boardTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+		boardTable.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+		boardTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+		boardTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+		
+		// 컬럼크기
+		TableColumnModel colModel = boardTable.getColumnModel();
+		colModel.getColumn(0).setPreferredWidth(30);
+		colModel.getColumn(1).setPreferredWidth(200);
+		colModel.getColumn(2).setPreferredWidth(30);
+		colModel.getColumn(3).setPreferredWidth(10);
+//		colModel.getColumn(4).setPreferredWidth(10);
+		
+		// 스크롤 추가
+		JScrollPane scrollTable = new JScrollPane(boardTable);
+		scrollTable.setLocation(0, 0);
+		scrollTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		//전체 가로, 세로 크기
+		scrollTable.setSize(pnlTable.getWidth(), pnlTable.getHeight());
+		
+		//add component
+		pnlTable.add(scrollTable, BorderLayout.CENTER);
+		
+	} // end showTable()
 
-}
+	public static void main(String[] args) {
+		//TODO for test
+		MemberBean mBean = new MemberBean();
+		MainBoard2 board = new MainBoard2(mBean);
+		board.setVisible(true);
+		
+		BoardCRUD boardCRUD = new BoardCRUD();
+		board.showTable(boardCRUD.getBoardList(0));
+	}
+	
+}; // end class

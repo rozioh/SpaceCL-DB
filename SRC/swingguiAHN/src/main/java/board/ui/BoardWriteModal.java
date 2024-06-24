@@ -29,8 +29,9 @@ public class BoardWriteModal extends JDialog {
 	private BoardBean mBoardBean;
 	private JTextField textField;
 	private JTextArea textContentArea;
-
-
+	private BoardCRUD mBoardCRUD = new BoardCRUD();
+	private MainBoard2 mMainBoard2;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -47,9 +48,10 @@ public class BoardWriteModal extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public BoardWriteModal(MemberBean memBean) {
+	public BoardWriteModal(MemberBean memBean, MainBoard2 mainBoard2) {
 		// 멤버객체
 		mMemberBean = memBean;
+		mMainBoard2 = mainBoard2;
 		
 		setBounds(100, 100, 591, 518);
 		getContentPane().setLayout(new BorderLayout());
@@ -114,6 +116,10 @@ public class BoardWriteModal extends JDialog {
 							clearText();
 //							BoardWriteModal.this.setVisible(false);
 							BoardWriteModal.this.dispose();
+							
+							// TODO 리스트를 새로 읽어와야해.
+							// 리스트 새롭게 조회
+							mainBoard2.showTable(mBoardCRUD.getBoardList(0));
 						}else {
 							JOptionPane.showMessageDialog(null, "글쓰기 저장 실패");
 						}
