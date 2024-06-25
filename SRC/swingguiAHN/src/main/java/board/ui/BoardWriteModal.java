@@ -119,7 +119,7 @@ public class BoardWriteModal extends JDialog {
 							
 							// TODO 리스트를 새로 읽어와야해.
 							// 리스트 새롭게 조회
-							mainBoard2.showTable(mBoardCRUD.getBoardList(0));
+							mainBoard2.showTable( 0 );
 						}else {
 							JOptionPane.showMessageDialog(null, "글쓰기 저장 실패");
 						}

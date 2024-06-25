@@ -165,12 +165,24 @@ public class MainBoard2 extends JFrame {
 		contentPane.add(pnlTable, BorderLayout.CENTER);
 		
 		// 리스트를 읽어온다.
-		showTable( mBoardCRUD.getBoardList(0));
+		showTable(0);
 		
+		// 검색 버튼 클릭 이벤트 등록
+		btnSearch.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// 리스트를 읽어온다.
+				showTable(0);
+				
+			}
+		});
 	}; // end 생성자
 	
 	// 리스트 출력
-	public void showTable(List<BoardBean> boardList) {
+	public void showTable(int pageNo) {
+		// DB 조회
+		List<BoardBean> boardList = mBoardCRUD.getBoardList(pageNo, txtSearch.getText());
 		
 		//TODO 출력 
 		String header[] = {"게시글 번호", "타이틀", "작성자", "조회수", "작성일" };
@@ -217,7 +229,7 @@ public class MainBoard2 extends JFrame {
 		colModel.getColumn(1).setPreferredWidth(200);
 		colModel.getColumn(2).setPreferredWidth(30);
 		colModel.getColumn(3).setPreferredWidth(10);
-//		colModel.getColumn(4).setPreferredWidth(10);
+//		colModel.getColumn(4).setPreferredWidth(10); // 나머지 영역을 갖는다.
 		
 		// 스크롤 추가
 		JScrollPane scrollTable = new JScrollPane(boardTable);
@@ -227,18 +239,9 @@ public class MainBoard2 extends JFrame {
 		scrollTable.setSize(pnlTable.getWidth(), pnlTable.getHeight());
 		
 		//add component
+		pnlTable.removeAll();
 		pnlTable.add(scrollTable, BorderLayout.CENTER);
 		
 	} // end showTable()
-
-	public static void main(String[] args) {
-		//TODO for test
-		MemberBean mBean = new MemberBean();
-		MainBoard2 board = new MainBoard2(mBean);
-		board.setVisible(true);
-		
-		BoardCRUD boardCRUD = new BoardCRUD();
-		board.showTable(boardCRUD.getBoardList(0));
-	}
 	
 }; // end class
