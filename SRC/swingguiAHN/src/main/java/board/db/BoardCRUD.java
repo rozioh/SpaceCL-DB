@@ -81,7 +81,7 @@ public class BoardCRUD extends CommonCRUD{
 		List<BoardBean> list = new ArrayList<BoardBean>();
 		int startOffset = pageNo;
 		if(pageNo > 1) {
-			startOffset = ((pageNo - 1) * 10) + 1; // 공식 암기
+			startOffset = ((pageNo - 1) * 10); // 공식 암기
 		}
 		
 		try {

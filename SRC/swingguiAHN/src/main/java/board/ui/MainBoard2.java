@@ -29,8 +29,8 @@ public class MainBoard2 extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtSearch;
-	private JButton btnNewButton;
-	private JButton btnNewButton_1;
+	private JButton btnNext;
+	private JButton btnPre;
 	private JButton btnWrite;
 
 	private MemberBean mMemBean;
@@ -41,6 +41,7 @@ public class MainBoard2 extends JFrame {
 	
 	// 현재 페이지 번호를 저장하는 변수
 	public int mCurPageNo = 1;
+	private int totPageCnt;
 	
 
 	/**
@@ -77,9 +78,7 @@ public class MainBoard2 extends JFrame {
 		btnWrite.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				if () {
-//					
-//				}
+
 				BoardWriteModal dialog = new BoardWriteModal(mMemBean, MainBoard2.this);
 				dialog.setModal(true);
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -92,22 +91,47 @@ public class MainBoard2 extends JFrame {
 		JPanel pnlPaging = new JPanel();
 		contentPane.add(pnlPaging, BorderLayout.SOUTH);
 		
-		btnNewButton_1 = new JButton("이전");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		btnPre = new JButton("이전");
+		btnPre.addActionListener(new ActionListener() {
+			
+			@Override
 			public void actionPerformed(ActionEvent e) {
+				// 현재 페이지가 1일때
+				if(mCurPageNo == 1) {
+					return;
+				}
+				
+				// 현재 페이지가 1이 아닐 때, 이전 버튼 동작
+				mCurPageNo -= 1;
+				showTable(mCurPageNo);
 			}
 		});
 		pnlPaging.setLayout(new BorderLayout(0, 0));
 		
 		
-		pnlPaging.add(btnNewButton_1, BorderLayout.WEST);
+		pnlPaging.add(btnPre, BorderLayout.WEST);
 		
 		pnlDispPage = new JPanel();
 		pnlPaging.add(pnlDispPage, BorderLayout.CENTER);
 		
 
-		btnNewButton = new JButton("다음");
-		pnlPaging.add(btnNewButton, BorderLayout.EAST);
+		btnNext = new JButton("다음");
+		btnNext.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// 현재 페이지가 가장 마지막일때
+				if(mCurPageNo == totPageCnt) {
+					return;
+				}
+					
+				mCurPageNo += 1;
+				showTable(mCurPageNo);
+				
+			}
+		});
+		
+		pnlPaging.add(btnNext, BorderLayout.EAST);
 		
 		pnlTable = new JPanel();
 		contentPane.add(pnlTable, BorderLayout.CENTER);
@@ -137,7 +161,7 @@ public class MainBoard2 extends JFrame {
 		// 추가
 		int listTotCnt = mBoardCRUD.getTotalListCnt( txtSearch.getText() );
 		// 전체 페이지 갯수
-		int totPageCnt = (int) Math.ceil(listTotCnt / 10.0) ;
+		totPageCnt = (int) Math.ceil(listTotCnt / 10.0) ;
 		// 전체 페이지 갯수만큼 돌면서 라벨을 추가한다.
 		
 		for(int i = 1; i <= totPageCnt; i++) {
