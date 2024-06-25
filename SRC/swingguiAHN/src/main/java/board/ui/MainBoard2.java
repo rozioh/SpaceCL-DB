@@ -3,15 +3,12 @@ package board.ui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -34,38 +31,17 @@ public class MainBoard2 extends JFrame {
 	private JTextField txtSearch;
 	private JButton btnNewButton;
 	private JButton btnNewButton_1;
-	private JLabel lblPage1;
-	private JLabel lblPage2;
-	private JLabel lblPage3;
-	private JLabel lblPage4;
-	private JLabel lblPage5;
-	private JLabel lblPage6;
-	private JLabel lblPage7;
-	private JLabel lblPage8;
-	private JLabel lblPage9;
-	private JLabel lblPage10;
 	private JButton btnWrite;
 
 	private MemberBean mMemBean;
 	private JPanel pnlTable;
 	private JTable boardTable;
 	private BoardCRUD mBoardCRUD = new BoardCRUD();
+	private JPanel pnlDispPage;
 	
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					MainBoard2 frame = new MainBoard2();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	// 현재 페이지 번호를 저장하는 변수
+	public int mCurPageNo = 1;
+	
 
 	/**
 	 * Create the frame.
@@ -112,60 +88,32 @@ public class MainBoard2 extends JFrame {
 		});
 		panel.add(btnWrite);
 		
-		
-		
-		
-		
-		
-		JPanel panel_1 = new JPanel();
-		contentPane.add(panel_1, BorderLayout.SOUTH);
+		// 페이징
+		JPanel pnlPaging = new JPanel();
+		contentPane.add(pnlPaging, BorderLayout.SOUTH);
 		
 		btnNewButton_1 = new JButton("이전");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		panel_1.add(btnNewButton_1);
-		
-		lblPage1 = new JLabel("1");
-		panel_1.add(lblPage1);
-		
-		lblPage2 = new JLabel("2");
-		panel_1.add(lblPage2);
-		
-		lblPage3 = new JLabel("3");
-		panel_1.add(lblPage3);
-		
-		lblPage4 = new JLabel("4");
-		panel_1.add(lblPage4);
-		
-		lblPage5 = new JLabel("5");
-		panel_1.add(lblPage5);
-		
-		lblPage6 = new JLabel("[6]");
-		panel_1.add(lblPage6);
-		
-		lblPage7 = new JLabel("7");
-		panel_1.add(lblPage7);
-		
-		lblPage8 = new JLabel("8");
-		panel_1.add(lblPage8);
-		
-		lblPage9 = new JLabel("9");
-		panel_1.add(lblPage9);
-		
-		lblPage10 = new JLabel("10");
-		panel_1.add(lblPage10);
+		pnlPaging.setLayout(new BorderLayout(0, 0));
 		
 		
+		pnlPaging.add(btnNewButton_1, BorderLayout.WEST);
+		
+		pnlDispPage = new JPanel();
+		pnlPaging.add(pnlDispPage, BorderLayout.CENTER);
+		
+
 		btnNewButton = new JButton("다음");
-		panel_1.add(btnNewButton);
+		pnlPaging.add(btnNewButton, BorderLayout.EAST);
 		
 		pnlTable = new JPanel();
 		contentPane.add(pnlTable, BorderLayout.CENTER);
 		
 		// 리스트를 읽어온다.
-		showTable(0);
+		showTable(mCurPageNo);
 		
 		// 검색 버튼 클릭 이벤트 등록
 		btnSearch.addActionListener(new ActionListener() {
@@ -173,7 +121,7 @@ public class MainBoard2 extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// 리스트를 읽어온다.
-				showTable(0);
+				showTable(mCurPageNo); // 시작할 때 1페이지를 읽어옴
 				
 			}
 		});
@@ -183,6 +131,55 @@ public class MainBoard2 extends JFrame {
 	public void showTable(int pageNo) {
 		// DB 조회
 		List<BoardBean> boardList = mBoardCRUD.getBoardList(pageNo, txtSearch.getText());
+		
+		// 페이징 표시
+		pnlDispPage.removeAll(); // 기존 페이지 번호는 전체 삭제
+		// 추가
+		int listTotCnt = mBoardCRUD.getTotalListCnt( txtSearch.getText() );
+		// 전체 페이지 갯수
+		int totPageCnt = (int) Math.ceil(listTotCnt / 10.0) ;
+		// 전체 페이지 갯수만큼 돌면서 라벨을 추가한다.
+		
+		for(int i = 1; i <= totPageCnt; i++) {
+			SpaceCLButton btnPage;
+			if(pageNo == i) {
+				// 현재 페이지 표시방법
+				btnPage = new SpaceCLButton("[" + i + "]");
+			}else {
+				btnPage = new SpaceCLButton(i + "");
+				
+			}
+			// TODO 페이지 클릭 이벤트 showTable(해당 페이지 번호)
+			// TODO 여기다 코딩
+			
+			btnPage.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+//					System.out.println(((SpaceCLButton) e.getSource()).getLabel()) ;					
+					
+					if( e.getSource() instanceof SpaceCLButton ) {
+						SpaceCLButton btn = (SpaceCLButton)e.getSource();
+						String title = btn.getLabel();
+						System.out.println("클릭한 페이지 번호: " + title);
+					 
+						// 현재 페이지일 경우 그냥 return;
+						if(title.startsWith("[")) {
+							return;
+						}
+						
+						int page = Integer.parseInt(title);
+						showTable(page);
+					}
+					
+				}
+			});
+			
+			pnlDispPage.add(btnPage);
+		}
+		// 왕중요!! 다시 패널에 페이지 버튼을 그려야함.
+		pnlDispPage.revalidate();
 		
 		//TODO 출력 
 		String header[] = {"게시글 번호", "타이틀", "작성자", "조회수", "작성일" };
@@ -240,7 +237,8 @@ public class MainBoard2 extends JFrame {
 		
 		//add component
 		pnlTable.removeAll();
-		pnlTable.add(scrollTable, BorderLayout.CENTER);
+		pnlTable.setLayout(new BorderLayout(0, 0));
+		pnlTable.add(scrollTable);
 		
 	} // end showTable()
 	

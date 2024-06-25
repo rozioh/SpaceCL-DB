@@ -67,7 +67,7 @@ public class Login extends JFrame {
 		btnLogin.addActionListener(mBtnLogin);
 		
 		// 엔터키 눌렀을때 로그인
-		btnLogin.addKeyListener(new KeyListener() {
+		mTxtPw.addKeyListener(new KeyListener() {
 
 			@Override
 			public void keyTyped(KeyEvent e) {

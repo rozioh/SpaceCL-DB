@@ -9,6 +9,11 @@ import java.util.List;
 
 public class BoardCRUD extends CommonCRUD{
 	
+	public static void main(String[] args) {
+		System.out.println(new BoardCRUD().getTotalListCnt(""));
+		
+	}
+	
 	//TODO board 테이블에 boardBean 값을 insert 데이터 하는 
 	// 코드를 작성하시오 (=insertMember() 참고해라)
 	public int insertBoard(BoardBean bBean) {
@@ -36,6 +41,36 @@ public class BoardCRUD extends CommonCRUD{
 		return cnt;
 	} // end insert
 	
+	/** 
+	 * 전체 게시물의 갯수를 구한다.
+	 * @return
+	 */
+	public int getTotalListCnt(String searchWord) {
+		Connection conn = getConnection();
+		int cnt = 0;
+		
+		try {
+			// 3. 쿼리 수행을 위한 SStatement 객체 생성
+			Statement stmt = conn.createStatement();
+			
+			// 4. 쿼리 작성
+			String sql = "SELECT count(*) FROM board";
+			
+			// 5. 쿼리 수행
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			if(rs.next()) {
+				cnt = rs.getInt(1); // 컬럼이 하나밖에 없어, 그리고 1부터 시작하니까 1인거야, 전체 개수
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return cnt;
+	}
+	
+	
 	/**
 	 * 리스트 취득 
 	 * @param pageNo 0:(최신목록 10개만 가져온다), 숫자: 해당 페이지를 목록으로 취득
@@ -44,6 +79,10 @@ public class BoardCRUD extends CommonCRUD{
 	public List<BoardBean> getBoardList(int pageNo, String searchWord){
 		Connection conn = getConnection();
 		List<BoardBean> list = new ArrayList<BoardBean>();
+		int startOffset = pageNo;
+		if(pageNo > 1) {
+			startOffset = ((pageNo - 1) * 10) + 1; // 공식 암기
+		}
 		
 		try {
 			// 3. 쿼리 수행을 위한 SStatement 객체 생성
@@ -59,7 +98,7 @@ public class BoardCRUD extends CommonCRUD{
 					+ " WHERE title like '%" + searchWord + "%'" 
 					+ " OR contents like '%" + searchWord + "%'" 
 					+ " ORDER BY board_no desc "
-					+ " LIMIT 10";
+					+ " LIMIT " + startOffset + ", 10";
 			
 			System.out.println(sql);
 			
