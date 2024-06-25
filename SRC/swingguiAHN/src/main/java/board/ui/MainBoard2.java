@@ -1,6 +1,7 @@
 package board.ui;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -29,11 +30,13 @@ public class MainBoard2 extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtSearch;
-	private JButton btnNext;
-	private JButton btnPre;
+	private JButton btnPageNext;
+	private JButton btnPagePrev;
 	private JButton btnWrite;
 
 	private MemberBean mMemBean;
+	
+	private BoardWriteModal dialog;
 	private JPanel pnlTable;
 	private JTable boardTable;
 	private BoardCRUD mBoardCRUD = new BoardCRUD();
@@ -41,7 +44,8 @@ public class MainBoard2 extends JFrame {
 	
 	// 현재 페이지 번호를 저장하는 변수
 	public int mCurPageNo = 1;
-	private int totPageCnt;
+	// 전체페이지 수
+	private int mTotPageCnt;
 	
 
 	/**
@@ -73,68 +77,50 @@ public class MainBoard2 extends JFrame {
 		panel.add(btnSearch);
 		
 		btnWrite = new JButton("글쓰기");
+		panel.add(btnWrite);
 		
 		// 익명 클래스!
 		btnWrite.addActionListener(new ActionListener() {
+			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				BoardWriteModal dialog = new BoardWriteModal(mMemBean, MainBoard2.this);
-				dialog.setModal(true);
-				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				dialog.setVisible(true);
+				if(dialog == null) {
+					dialog = new BoardWriteModal(mMemBean, MainBoard2.this); 
+				}
+				if( !dialog.isVisible() ) {
+					dialog.setModal(true);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.clearInputs();
+					dialog.setVisible(true);
+				}else {
+					dialog.clearInputs();
+					dialog.setVisible(true);
+				}
+				
 			}
 		});
-		panel.add(btnWrite);
+		
 		
 		// 페이징
 		JPanel pnlPaging = new JPanel();
 		contentPane.add(pnlPaging, BorderLayout.SOUTH);
 		
-		btnPre = new JButton("이전");
-		btnPre.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// 현재 페이지가 1일때
-				if(mCurPageNo == 1) {
-					return;
-				}
-				
-				// 현재 페이지가 1이 아닐 때, 이전 버튼 동작
-				mCurPageNo -= 1;
-				showTable(mCurPageNo);
-			}
-		});
+		btnPagePrev = new JButton("이전");
+		
 		pnlPaging.setLayout(new BorderLayout(0, 0));
+		pnlPaging.add(btnPagePrev, BorderLayout.WEST);
 		
+		btnPageNext = new JButton("다음");
+		pnlPaging.add(btnPageNext, BorderLayout.EAST);
 		
-		pnlPaging.add(btnPre, BorderLayout.WEST);
-		
+		// 페이지 번호가 표시되는 영역 (Panel)
 		pnlDispPage = new JPanel();
 		pnlPaging.add(pnlDispPage, BorderLayout.CENTER);
-		
-
-		btnNext = new JButton("다음");
-		btnNext.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// 현재 페이지가 가장 마지막일때
-				if(mCurPageNo == totPageCnt) {
-					return;
-				}
-					
-				mCurPageNo += 1;
-				showTable(mCurPageNo);
-				
-			}
-		});
-		
-		pnlPaging.add(btnNext, BorderLayout.EAST);
+		pnlDispPage.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		pnlTable = new JPanel();
 		contentPane.add(pnlTable, BorderLayout.CENTER);
+		pnlTable.setLayout(new BorderLayout(0, 0));
 		
 		// 리스트를 읽어온다.
 		showTable(mCurPageNo);
@@ -146,13 +132,54 @@ public class MainBoard2 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// 리스트를 읽어온다.
 				showTable(mCurPageNo); // 시작할 때 1페이지를 읽어옴
-				
 			}
 		});
+		
+		// 이전 페이징 버튼
+		btnPagePrev.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(mCurPageNo > 1) {
+					showTable(mCurPageNo - 1);
+				}
+//				// 현재 페이지가 1일때
+//				if(mCurPageNo == 1) {
+//					return;
+//				}
+//				
+//				// 현재 페이지가 1이 아닐 때, 이전 버튼 동작
+//				mCurPageNo -= 1;
+//				showTable(mCurPageNo);
+			}
+		});
+				
+		// 다음 페이징 버튼
+		btnPageNext.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(mCurPageNo < mTotPageCnt) {
+					showTable(mCurPageNo + 1);
+				}
+//				// 현재 페이지가 가장 마지막일때
+//				if(mCurPageNo == totPageCnt) {
+//					return;
+//				}
+//					
+//				mCurPageNo += 1;
+//				showTable(mCurPageNo);
+				
+			}
+		});		
 	}; // end 생성자
 	
 	// 리스트 출력
 	public void showTable(int pageNo) {
+		
+		// 멤버변수의 페이지 값을 업데이트 해놓는다.
+		mCurPageNo = pageNo;
+		
 		// DB 조회
 		List<BoardBean> boardList = mBoardCRUD.getBoardList(pageNo, txtSearch.getText());
 		
@@ -161,10 +188,9 @@ public class MainBoard2 extends JFrame {
 		// 추가
 		int listTotCnt = mBoardCRUD.getTotalListCnt( txtSearch.getText() );
 		// 전체 페이지 갯수
-		totPageCnt = (int) Math.ceil(listTotCnt / 10.0) ;
+		mTotPageCnt = (int) Math.ceil(listTotCnt / 10.0) ;
 		// 전체 페이지 갯수만큼 돌면서 라벨을 추가한다.
-		
-		for(int i = 1; i <= totPageCnt; i++) {
+		for(int i = 1; i <= mTotPageCnt; i++) {
 			SpaceCLButton btnPage;
 			if(pageNo == i) {
 				// 현재 페이지 표시방법
@@ -175,14 +201,10 @@ public class MainBoard2 extends JFrame {
 			}
 			// TODO 페이지 클릭 이벤트 showTable(해당 페이지 번호)
 			// TODO 여기다 코딩
-			
 			btnPage.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					
-//					System.out.println(((SpaceCLButton) e.getSource()).getLabel()) ;					
-					
 					if( e.getSource() instanceof SpaceCLButton ) {
 						SpaceCLButton btn = (SpaceCLButton)e.getSource();
 						String title = btn.getLabel();
@@ -192,7 +214,6 @@ public class MainBoard2 extends JFrame {
 						if(title.startsWith("[")) {
 							return;
 						}
-						
 						int page = Integer.parseInt(title);
 						showTable(page);
 					}

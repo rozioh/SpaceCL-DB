@@ -27,23 +27,10 @@ public class BoardWriteModal extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private MemberBean mMemberBean;
 	private BoardBean mBoardBean;
-	private JTextField textField;
-	private JTextArea textContentArea;
+	private JTextField txtTitle;
+	private JTextArea txtContent;
 	private BoardCRUD mBoardCRUD = new BoardCRUD();
 	private MainBoard2 mMainBoard2;
-	
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		try {
-//			BoardWriteModal dialog = new BoardWriteModal();
-//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-//			dialog.setVisible(true);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	/**
 	 * Create the dialog.
@@ -69,10 +56,10 @@ public class BoardWriteModal extends JDialog {
 				panel.add(lblTitleLabel, BorderLayout.WEST);
 			}
 			{
-				textField = new JTextField();
-				textField.setFont(new Font("굴림", Font.PLAIN, 15));
-				textField.setColumns(10);
-				panel.add(textField, BorderLayout.CENTER);
+				txtTitle = new JTextField();
+				txtTitle.setFont(new Font("굴림", Font.PLAIN, 15));
+				txtTitle.setColumns(10);
+				panel.add(txtTitle, BorderLayout.CENTER);
 			}
 		}
 		{
@@ -87,8 +74,8 @@ public class BoardWriteModal extends JDialog {
 			lblContentLabel.setFont(new Font("한컴산뜻돋움", Font.PLAIN, 13));
 		}
 		{
-			textContentArea = new JTextArea();
-			contentPanel.add(textContentArea, BorderLayout.CENTER);
+			txtContent = new JTextArea();
+			contentPanel.add(txtContent, BorderLayout.CENTER);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -104,8 +91,8 @@ public class BoardWriteModal extends JDialog {
 						mBoardBean = new BoardBean();
 						
 						// mBoardBean에 데이터 저장
-						mBoardBean.setTitle(textField.getText());
-						mBoardBean.setContents(textContentArea.getText());
+						mBoardBean.setTitle(txtTitle.getText());
+						mBoardBean.setContents(txtContent.getText());
 						mBoardBean.setMemberNo(mMemberBean.getMemberNo());
 						
 						BoardCRUD bCRUD = new BoardCRUD();
@@ -113,11 +100,10 @@ public class BoardWriteModal extends JDialog {
 						if( cnt > 0 ) {
 							JOptionPane.showMessageDialog(null, "글쓰기 저장 성공");
 							// 글쓰기 화면 숨김
-							clearText();
+//							clearInputs();
 //							BoardWriteModal.this.setVisible(false);
 							BoardWriteModal.this.dispose();
 							
-							// TODO 리스트를 새로 읽어와야해.
 							// 리스트 새롭게 조회
 							mainBoard2.showTable( mainBoard2.mCurPageNo );
 						}else {
@@ -149,9 +135,9 @@ public class BoardWriteModal extends JDialog {
 	} // end 생성자
 	
 	// textClear
-	public void clearText() {
-		textField.setText(""); 
-		textContentArea.setText("");
+	public void clearInputs() {
+		txtTitle.setText(""); 
+		txtContent.setText("");
 	}
 
 }

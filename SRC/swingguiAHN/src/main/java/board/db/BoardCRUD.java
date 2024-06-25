@@ -33,7 +33,6 @@ public class BoardCRUD extends CommonCRUD{
 			// 5. 쿼리실행
 			cnt = pstmt.executeUpdate();
 			
-			System.out.println("Board Data Insert 성공");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,7 +53,9 @@ public class BoardCRUD extends CommonCRUD{
 			Statement stmt = conn.createStatement();
 			
 			// 4. 쿼리 작성
-			String sql = "SELECT count(*) FROM board";
+			String sql = "SELECT count(*) FROM board"
+					+ " WHERE title like '%" + searchWord + "%'" 
+					+ " OR contents like '%" + searchWord + "%'";
 			
 			// 5. 쿼리 수행
 			ResultSet rs = stmt.executeQuery(sql);
@@ -77,12 +78,10 @@ public class BoardCRUD extends CommonCRUD{
 	 * @return
 	 */
 	public List<BoardBean> getBoardList(int pageNo, String searchWord){
+		
 		Connection conn = getConnection();
 		List<BoardBean> list = new ArrayList<BoardBean>();
-		int startOffset = pageNo;
-		if(pageNo > 1) {
-			startOffset = ((pageNo - 1) * 10); // 공식 암기
-		}
+		int startOffset = ((pageNo - 1) * 10); // 공식 암기
 		
 		try {
 			// 3. 쿼리 수행을 위한 SStatement 객체 생성
