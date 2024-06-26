@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class BoardCRUD extends CommonCRUD{
 	
 	public static void main(String[] args) {
@@ -123,8 +125,125 @@ public class BoardCRUD extends CommonCRUD{
 		} catch (Exception e) {
 			e.printStackTrace();
 		} // end try~catch
-		return list;
 		
+		return list;
 	} // end getBoardList
+	
+	public BoardBean getBoard(String boardNo) {
+		Connection conn = getConnection();
+		BoardBean bBean = new BoardBean();
+		
+		try {
+			// 3. 쿼리 수행을 위한 Statement 객체 생성
+			Statement stmt = conn.createStatement();
+			
+			// 4. 쿼리 작성
+			String sql = "SELECT "
+					+ " board_no, title, contents, count, secret_yn, member_no, "
+					+ " (select name from member where member_no = b.member_no) memberName, "
+					+ " reg_dt"
+					+ " FROM board b"
+					+ " WHERE board_no = '" + boardNo + "'";
+			
+			// 5. 쿼리 수행
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			// 6. 쿼리 실행결과 출력하기
+			if(rs.next()) {
+				// 1건 조회
+				bBean.setBoardNo( rs.getString("board_no") );
+				bBean.setTitle( rs.getString("title") );
+				bBean.setContents( rs.getString("contents") );
+				bBean.setCount( rs.getString("count") );
+				bBean.setSecretYn( rs.getString("secret_yn") );
+				bBean.setMemberNo( rs.getString("member_no") );
+				bBean.setMemberName( rs.getString("memberName") );
+				bBean.setRegDt( rs.getString("reg_dt") );
+				
+			} // end while
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bBean;
+		
+	}
 
+	/**
+	 * 1건 업데이트
+	 * @param boardBean
+	 * @return 업데이트된 row 수
+	 */
+	public int updateBoard(BoardBean boardBean) {
+		
+		int cntRow = 0;
+		Connection conn = getConnection();
+		
+		// 값이 안오면 바로 리턴
+		if( StringUtils.isEmpty(boardBean.getBoardNo())) {
+			return cntRow;
+		}
+		try {
+			// 3. 쿼리준비
+			String sql = "UPDATE board SET reg_dt = now() ";
+			if( StringUtils.isNotEmpty(boardBean.getBoardNo()) ) {
+				sql += ", title = '" + boardBean.getTitle() + "'";
+			}
+			if( StringUtils.isNotEmpty(boardBean.getBoardNo()) ) {
+				sql += ", contents = '" + boardBean.getContents() + "'";
+			}
+			sql += ", count = count + 1";
+			sql += " WHERE board_no = ?";
+			
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			
+			// 4. 데이터 binding
+			pstmt.setString(1,  boardBean.getBoardNo());
+			
+			// 5. 쿼리실행
+			cntRow = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return cntRow;
+	} // end updateBoard()
+	
+	/**
+	 * 1건 삭제
+	 * @param boardNo
+	 * @return 삭제된 row 수
+	 */
+	public int delBoard(String boardNo) {
+		
+		int cntRow = 0;
+		Connection conn = getConnection();
+		
+		// 값이 안오면 바로 리턴
+		if( StringUtils.isEmpty(boardNo)) {
+			return cntRow;
+		}
+		
+		try {
+			// 3. 쿼리준비
+			String sql = "DELETE FROM board WHERE board_no = ?";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			
+			// 4. 데이터 binding
+			pstmt.setString(1, boardNo);
+			
+			// 5. 쿼리실행
+			cntRow = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return cntRow;
+		
+	} // end delBoard()
+	
 };// end class
+

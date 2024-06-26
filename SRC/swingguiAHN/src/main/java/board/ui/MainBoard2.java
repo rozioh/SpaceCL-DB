@@ -2,8 +2,11 @@ package board.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
 
@@ -255,6 +258,31 @@ public class MainBoard2 extends JFrame {
 				return false;
 			}
 		};
+		
+		//TODO 테이블 더블클릭
+		boardTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				JTable table = (JTable)e.getSource();
+				Point point = e.getPoint();
+				int row = table.rowAtPoint(point); // 클릭한 row 값
+				if( e.getClickCount() == 2 && table.getSelectedRow() != -1 ) {
+					//TODO 더블클릭 이벤트 여기로 온다.
+					
+					//TableColumnModel model = table.getColumnModel();
+					// row 행의 0번째 열의 값을 가져온다.
+					String boardNo = (String) table.getValueAt(row, 0); // 테이블 고유 번호
+					
+					// DB 조회
+					BoardBean boardBean = mBoardCRUD.getBoard(boardNo);
+					
+					// 상세화면 생성
+					BoardDetail boardDetail = new BoardDetail(mMemBean, boardBean, MainBoard2.this);
+					boardDetail.setVisible(true);
+					
+				}
+			}
+		});
 		
 		// 셀 값 가운데 정렬
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
