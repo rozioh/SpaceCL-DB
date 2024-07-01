@@ -11,11 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class BoardCRUD extends CommonCRUD{
 	
-	public static void main(String[] args) {
-		System.out.println(new BoardCRUD().getTotalListCnt(""));
-		
-	}
-	
 	//TODO board 테이블에 boardBean 값을 insert 데이터 하는 
 	// 코드를 작성하시오 (=insertMember() 참고해라)
 	public int insertBoard(BoardBean bBean) {
@@ -100,8 +95,6 @@ public class BoardCRUD extends CommonCRUD{
 					+ " OR contents like '%" + searchWord + "%'" 
 					+ " ORDER BY board_no desc "
 					+ " LIMIT " + startOffset + ", 10";
-			
-			System.out.println(sql);
 			
 			// 5. 쿼리 수행
 			ResultSet rs = stmt.executeQuery(sql);
