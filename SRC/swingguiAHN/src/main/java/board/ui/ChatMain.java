@@ -39,7 +39,7 @@ public class ChatMain extends JFrame {
 		
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 410, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -63,7 +63,7 @@ public class ChatMain extends JFrame {
 		txtMsg = new JTextField();
 		panel.add(txtMsg, BorderLayout.CENTER);
 		txtMsg.setColumns(10);
-		txtMsg.addActionListener(mEnterEvent);
+		txtMsg.addActionListener(mSendClick); // 엔터
 		
 		btnSend = new JButton("전송");
 		panel.add(btnSend, BorderLayout.EAST);
@@ -82,16 +82,6 @@ public class ChatMain extends JFrame {
 			new SenderChat(mSocket, txtMsg.getText()).start();
 			txtMsg.setText(""); //메시지 전송 후 메시지란 초기화
 			txtMsg.requestFocus();
-			
-		}
-	};
-	
-	//메시지 엔터 이벤트
-	private ActionListener mEnterEvent = new ActionListener() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			btnSend.doClick();
 			
 		}
 	};

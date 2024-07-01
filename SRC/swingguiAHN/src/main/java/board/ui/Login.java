@@ -62,36 +62,12 @@ public class Login extends JFrame {
 		centerP.add(mTxtPw);
 		
 		
-		// south
+		// 버튼
 		Button btnLogin = new Button("OK");
 		btnLogin.addActionListener(mBtnLogin);
 		
 		// 엔터키 눌렀을때 로그인
-		mTxtPw.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			// TODO 엔터키 만들기
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				if(e.getKeyChar() == KeyEvent.VK_ENTER) {
-//					mBtnLogin.actionPerformed(null);;
-				}
-				
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
+		mTxtPw.addActionListener(mBtnLogin);
 		
 		// 레이아웃 배치
 		container.add(centerP, BorderLayout.CENTER);
