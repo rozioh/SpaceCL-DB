@@ -71,4 +71,30 @@ public class MemberCRUD extends CommonCRUD{
 		
 		return cnt;
 	}
+	
+	/**
+	 * 회원 삭제
+	 * @param id
+	 * @return
+	 */
+	public int deleteMember(String id) {
+		Connection conn = getConnection();
+		int cnt = 0;
+		
+		try {
+			// 쿼리 작성
+			String sql = "DELETE FROM member WHERE id = '" + id + "'";
+			
+			// PreparedStatement 객체 생성
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			
+			// 쿼리 실행
+			cnt = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return cnt;
+	}
 }
