@@ -39,7 +39,7 @@ public class MemberCRUD extends CommonCRUD{
 	}
 	
 	/**
-	 * 로그인 정보 확인
+	 * 로그인 성공 여부 확인
 	 * @param id
 	 * @param pw
 	 * @return
@@ -70,6 +70,46 @@ public class MemberCRUD extends CommonCRUD{
 		}
 		
 		return cnt;
+	}
+	
+	/**
+	 * 로그인 id로 멤버 정보 가져오기
+	 * @param id
+	 * @return
+	 */
+	public MemberBean getMemberInfo(String id) {
+		Connection conn = getConnection();
+		MemberBean memberBean = new MemberBean();
+		
+		try {
+			// Statement 객체 생성
+			Statement stmt = conn.createStatement();
+			
+			// 쿼리 생성
+			String sql = "SELECT member_no, id, pw, name, email, birthdate, hp, addr, last_login_dt, reg_dt"
+					+ " FROM member"
+					+ " WHERE id = '" + id + "'";
+			
+			// 쿼리 실행
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			if(rs.next()) {
+				memberBean.setMemberNo(rs.getString(1));
+				memberBean.setId(rs.getString(2));
+				memberBean.setPw(rs.getString(3));
+				memberBean.setName(rs.getString(4));
+				memberBean.setEmail(rs.getString(5));
+				memberBean.setBirthdate(rs.getString(6));
+				memberBean.setHp(rs.getString(7));
+				memberBean.setAddr(rs.getString(8));
+				memberBean.setRegDt(rs.getString(9));
+				memberBean.setLastLoginDt(rs.getString(10));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return memberBean;
 	}
 	
 	/**

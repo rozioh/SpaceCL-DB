@@ -14,6 +14,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import board.db.MemberBean;
 import board.db.MemberCRUD;
 
 public class Login extends JFrame {
@@ -89,6 +90,11 @@ public class Login extends JFrame {
 			if(cnt > 0) {
 				JOptionPane.showMessageDialog(rootPane, "로그인 성공");
 				dispose(); // 로그인 창 닫기
+				
+				MemberBean memberBean = mMemberCRUD.getMemberInfo(id);
+				MainBoard mainBoard = new MainBoard(memberBean);
+				mainBoard.setVisible(true);
+				
 			}else {
 				JOptionPane.showMessageDialog(rootPane, "로그인 실패");
 			}
